@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Page Title</title>
+  <title>Lunar Landing Site Selector</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
@@ -12,14 +12,19 @@
 
     /* Style the header */
     .header {
-      padding: 80px;
-      text-align: center;
-      background-image: url("https://pin.it/2hXodSQHf");
- 	  background-size: cover;
-  	  background-position: center;
-  	  background-repeat: no-repeat;
-      color: blue;
+      position: relative; overflow: hidden;
+      padding: 70px 20px 150px; text-align: center; color: #fff;
+      background:
+        radial-gradient(1.5px 1.5px at 12% 22%, #fff, transparent),
+        radial-gradient(1px 1px at 28% 60%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 47% 18%, #fff, transparent),
+        radial-gradient(1px 1px at 63% 48%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 78% 25%, #fff, transparent),
+        radial-gradient(1px 1px at 91% 58%, #fff, transparent),
+        linear-gradient(#010a10, #06222e);
     }
+    .header h1, .header p { position: relative; z-index: 1; margin: 0 0 10px; }
+    .header .scene { position: absolute; left: 0; bottom: 0; width: 100%; height: 130px; }
 
     /* Increase the font size of the h1 element */
     .header h1 {
@@ -29,10 +34,10 @@
     /* Style the navigation */
     .navigation {
       display: flex;
-      justify-content: center;
+      justify-content: right;
       gap: 10px;
       padding: 15px;
-      background: #eee;
+      background: #bebaba;
     }
 
     .nav-button {
@@ -46,77 +51,183 @@
     .nav-button:hover {
       background: #555;
     }
+
+    /* ---------- NEW: app layout (controls left, map right) ---------- */
+    :root {
+      --panel: #f6f8f9; --ink: #18262e; --muted: #5b6b74; --line: #d3dce0;
+      --accent: #0d6b6e; --accent-ink: #fff;
+    }
+    * { box-sizing: border-box; }
+    .app {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      height: 80vh;
+      min-height: 540px;
+      border-top: 1px solid var(--line);
+    }
+    .panel {
+      background: var(--panel);
+      color: var(--ink);
+      border-right: 1px solid var(--line);
+      padding: 18px;
+      overflow-y: auto;
+    }
+    .panel h2.group { font-size: 15px; margin: 20px 0 8px; }
+    .crit { margin: 0 0 13px; }
+    .crit label { display: flex; justify-content: space-between; font-weight: 600; font-size: 14px; }
+    .crit .pct { color: var(--accent); font-variant-numeric: tabular-nums; }
+    .crit small { display: block; color: var(--muted); font-size: 12px; }
+    .panel input[type=range] { width: 100%; accent-color: var(--accent); }
+    .limit { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 6px; }
+    .row { display: flex; gap: 8px; align-items: center; margin: 12px 0; }
+    .panel button {
+      font: inherit; cursor: pointer; border: 1px solid var(--line); background: #fff;
+      color: var(--ink); border-radius: 4px; padding: 8px 14px;
+    }
+    .panel button:hover { border-color: var(--accent); }
+    .panel button.primary { background: #333; color: #fff; border-color: #333; flex: 1; }
+    .panel button.primary:hover { background: #555; }
+    .panel :focus-visible, .nav-button:focus-visible, .factor:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* your six site sections, now clickable and ranked */
+    .factor {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #fff; border: 1px solid var(--line); border-radius: 4px;
+      padding: 6px 12px; margin-bottom: 6px; cursor: pointer;
+    }
+    .factor:hover { border-color: var(--accent); }
+    .factor h2 { font-size: 14px; margin: 0; font-weight: 600; }
+    .factor .score { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 700; }
+    .factor .score.out { color: var(--muted); font-weight: 400; }
+
+    .stats { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 10px; font-size: 13px; }
+    .stats dt { color: var(--muted); }
+    .stats dd { margin: 0 0 6px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    /* dark map area */
+    .viewport { position: relative; background: #070b0e; overflow: hidden; min-width: 0; }
+    #map { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+    #map.drag { cursor: grabbing; }
+    .crosshair { position: absolute; pointer-events: none; display: none; }
+    .legend {
+      position: absolute; left: 14px; bottom: 14px; color: #e6ecee; font-size: 12px;
+      background: rgba(7,11,14,.85); padding: 8px 10px; border-radius: 6px; pointer-events: none;
+    }
+    .legend-labels { display: flex; justify-content: space-between; gap: 12px; }
+    .legend-bar { width: 170px; height: 10px; border-radius: 2px; margin: 4px 0; }
+    .legend .note { color: #9fb0b8; }
+    .readout, .status {
+      position: absolute; right: 12px; top: 12px; color: #e6ecee; font-size: 13px;
+      background: rgba(7,11,14,.85); padding: 4px 10px; border-radius: 6px; pointer-events: none;
+    }
+    .status { right: auto; left: 12px; display: none; }
+
+    @media (max-width: 760px) {
+      .header { padding: 40px 16px 120px; }
+      .app { grid-template-columns: 1fr; height: auto; }
+      .viewport { height: 70vh; }
+    }
   </style>
 </head>
 <body>
 
   <div class="header">
     <h1>Lunar Landing Site Selector</h1>
-    <p>Set how much each factor matters. The tool scores every location from 0 to 100.</p>
+    <p>Set how much each factor matters, then run the analysis.</p>
+    <svg class="scene" viewBox="0 0 1200 130" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <circle cx="1020" cy="32" r="26" fill="#3d7fc4"/>
+      <path d="M1004 22q10 6 6 16q-8 2-12-6z" fill="#4fa36a"/>
+      <path d="M0 130V96Q150 78 320 92T640 88T960 94T1200 84V130Z" fill="#6f7479"/>
+      <path d="M0 130V108Q200 96 420 106T800 102T1200 104V130Z" fill="#9a9ea3"/>
+      <g stroke="#5c6168" stroke-width="1.5">
+        <path d="M290 108a42 42 0 0 1 84 0z" fill="#dfe5e9"/>
+        <rect x="374" y="92" width="70" height="16" rx="6" fill="#c7ced3"/>
+        <path d="M444 108a24 24 0 0 1 48 0z" fill="#dfe5e9"/>
+        <path d="M332 66V46M322 46h20"/>
+      </g>
+      <circle cx="332" cy="44" r="3" fill="#ff5a36"/>
+      <g fill="#ffd66b"><rect x="384" y="97" width="8" height="5"/><rect x="400" y="97" width="8" height="5"/><rect x="416" y="97" width="8" height="5"/></g>
+      <g fill="#2e5d9a" stroke="#9fb4c8"><path d="M610 112l26-18h34l-26 18z"/><path d="M690 112l26-18h34l-26 18z"/></g>
+    </svg>
   </div>
 
   <nav class="navigation">
-    <a href="#" class="nav-button">Zoom In</a>
-    <a href="#" class="nav-button">Zoom Out</a>
-    <a href="#" class="nav-button">Fit</a>
-    <a href="#" class="nav-button">Go to Best Site</a>
+    <a href="#" class="nav-button" id="zin">Zoom In</a>
+    <a href="#" class="nav-button" id="zout">Zoom Out</a>
+    <a href="#" class="nav-button" id="fit">Fit</a>
+    <a href="#" class="nav-button" id="goBest">Go to Best Site</a>
   </nav>
 
-</body>
-</html>
+  <div class="app">
 
+    <!-- LEFT: parameter input -->
+    <aside class="panel">
+      <div id="controls"></div>
+      <div class="limit crit">
+        <label for="slopeLimit"><span>Maximum slope</span><span class="pct" id="slopeVal"></span></label>
+        <small>Steeper ground is excluded from the map entirely</small>
+        <input type="range" id="slopeLimit" min="2" max="20" value="10">
+      </div>
+      <div class="row"><label><input type="checkbox" id="live" checked> Update map as I move sliders</label></div>
+      <div class="crit">
+        <label for="overlay"><span>Suitability overlay</span><span class="pct" id="ovVal">60%</span></label>
+        <small>Lower it to see more of the lunar surface</small>
+        <input type="range" id="overlay" min="0" max="100" value="60">
+      </div>
+      <div class="row">
+        <button id="reset">Reset</button>
+        <button class="primary" id="run">Run analysis</button>
+      </div>
 
-<section class="factor"><h2>Site Sector</section>
-<section class="factor"><h2>Connecting ridge</h2></section>
-<section class="factor"><h2>Shackleton rim</h2></section>
-<section class="factor"><h2>Peak near Shackleton</h2></section>
-<section class="factor"><h2>de Gerlache rim</h2></section>
-<section class="factor"><h2>Malapert massif</h2></section>
+      <h2 class="group">Candidate regions</h2>
+      <div id="regions"><!-- one <section class="factor"> per site is built here --></div>
 
+      <dl class="stats">
+        <dt>Best site location (column, row)</dt><dd id="sLoc">–</dd>
+        <dt>Total weight</dt><dd id="sTotal">–</dd>
+      </dl>
+    </aside>
 
-<!-- Dark map area -->
-  <div class="viewport">
-    <canvas id="map"></canvas>
+    <!-- RIGHT: dark map area -->
+    <div class="viewport">
+      <canvas id="map" aria-label="Landing site suitability map"></canvas>
 
-    <svg class="crosshair" width="44" height="44" viewBox="0 0 44 44">
-      <circle cx="22" cy="22" r="10" fill="none" stroke="#ff5a36" stroke-width="3"/>
-      <path d="M22 0v44M0 22h44" stroke="#ff5a36" stroke-width="3"/>
-    </svg>
+      <svg class="crosshair" id="crosshair" width="44" height="44" viewBox="0 0 44 44">
+        <circle cx="22" cy="22" r="10" fill="none" stroke="#ff5a36" stroke-width="3"/>
+        <path d="M22 0v44M0 22h44" stroke="#ff5a36" stroke-width="3"/>
+      </svg>
 
-    <div class="legend">
-      <div class="legend-labels"><span>Less suitable</span><span>More suitable</span></div>
-      <div class="legend-bar"></div>
+      <div class="status" id="status"></div>
+      <div class="readout" id="readout">Drag to pan, scroll to zoom</div>
+
+      <div class="legend">
+        <div class="legend-labels"><span>Low</span><span>High</span></div>
+        <div class="legend-bar" id="ramp"></div>
+        <div class="note">Dark = excluded cells</div>
+      </div>
     </div>
+
   </div>
-</body>
-</html>
 
 <script>
-  const canvas = document.getElementById("map");
-  const ctx = canvas.getContext("2d");
-  const img = ctx.createImageData(canvas.width, canvas.height);
+/* ==========================================================================
+   INTEGRATION POINT: replace SiteAnalysis.run with your real function,
+   or set BACKEND_URL to your Python server (for example your app.py).
 
-  for (let y = 0; y < canvas.height; y++) {
-    for (let x = 0; x < canvas.width; x++) {
-      // Fake score 0-1; replace with your real grid values
-      const s = (Math.sin(x / 20) + Math.cos(y / 15) + 2) / 4;
-      const i = (y * canvas.width + x) * 4;
-      img.data[i]     = 30 + 200 * s;   // R
-      img.data[i + 1] = 40 + 190 * s;   // G
-      img.data[i + 2] = 120 - 80 * s;   // B
-      img.data[i + 3] = 255;
-    }
-  }
-  ctx.putImageData(img, 0, 0);
-
-  canvas.addEventListener("mousemove", e => {
-    const r = canvas.getBoundingClientRect();
-    const col = Math.floor((e.clientX - r.left) / r.width * canvas.width);
-    const row = Math.floor((e.clientY - r.top) / r.height * canvas.height);
-    console.log("Column " + col + ", row " + row);
-  });
+   INPUT  params = { weights:{sunlight,earth,ice,temp,smooth},   raw 0–100
+                     normalized:{...},                            sums to 1
+                     limits:{maxSlope} }                          degrees
+   OUTPUT { width, height, values }   values: width*height numbers, 0–1,
+                                      NaN (or null) = excluded cell.
+                                      Optional: best:{x,y} marks a best site.
+   ========================================================================== */
+const BACKEND_URL = null;   // e.g. "http://127.0.0.1:5000/analyze"
 </script>
 
-
-
-
+<script src="./analysis.js" defer></script>
+<script src="./Controls.js" defer></script>
+<script src="./noise%20field.js" defer></script>
+<script src="./map.js" defer></script>
+<script src="./result.js" defer></script>
+</body>
+</html>
