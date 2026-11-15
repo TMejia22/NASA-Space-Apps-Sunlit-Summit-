@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Page Title</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      margin: 0;
+    }
+
+    /* Style the header */
+    .header {
+      padding: 80px;
+      text-align: center;
+      background-image: url("https://pin.it/2hXodSQHf");
+ 	  background-size: cover;
+  	  background-position: center;
+  	  background-repeat: no-repeat;
+      color: white;
+    }
+
+    /* Increase the font size of the h1 element */
+    .header h1 {
+      font-size: 40px;
+    }
+
+    /* Style the navigation */
+    .navigation {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px;
+      background: #eee;
+    }
+
+    .nav-button {
+      padding: 8px 16px;
+      background: #333;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+
+    .nav-button:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Lunar Landing Site Selector</h1>
+    <p>Set how much each factor matters. The tool scores every location from 0 to 100.</p>
+  </div>
+
+  <nav class="navigation">
+    <a href="#" class="nav-button">Zoom In</a>
+    <a href="#" class="nav-button">Zoom Out</a>
+    <a href="#" class="nav-button">Fit</a>
+    <a href="#" class="nav-button">Go to Best Site</a>
+  </nav>
+
+</body>
+</html>
+
+
+<section class="factor"><h2>Site Sector</section>
+<section class="factor"><h2>Connecting ridge</h2></section>
+<section class="factor"><h2>Shackleton rim</h2></section>
+<section class="factor"><h2>Peak near Shackleton</h2></section>
+<section class="factor"><h2>de Gerlache rim</h2></section>
+<section class="factor"><h2>Malapert massif</h2></section>
+
+
+<!-- Dark map area -->
+  <div class="viewport">
+    <canvas id="map"></canvas>
+
+    <svg class="crosshair" width="44" height="44" viewBox="0 0 44 44">
+      <circle cx="22" cy="22" r="10" fill="none" stroke="#ff5a36" stroke-width="3"/>
+      <path d="M22 0v44M0 22h44" stroke="#ff5a36" stroke-width="3"/>
+    </svg>
+
+    <div class="legend">
+      <div class="legend-labels"><span>Less suitable</span><span>More suitable</span></div>
+      <div class="legend-bar"></div>
+    </div>
+  </div>
+</body>
+</html>
+
+<script>
+  const canvas = document.getElementById("map");
+  const ctx = canvas.getContext("2d");
+  const img = ctx.createImageData(canvas.width, canvas.height);
+
+  for (let y = 0; y < canvas.height; y++) {
+    for (let x = 0; x < canvas.width; x++) {
+      // Fake score 0-1; replace with your real grid values
+      const s = (Math.sin(x / 20) + Math.cos(y / 15) + 2) / 4;
+      const i = (y * canvas.width + x) * 4;
+      img.data[i]     = 30 + 200 * s;   // R
+      img.data[i + 1] = 40 + 190 * s;   // G
+      img.data[i + 2] = 120 - 80 * s;   // B
+      img.data[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+
+  canvas.addEventListener("mousemove", e => {
+    const r = canvas.getBoundingClientRect();
+    const col = Math.floor((e.clientX - r.left) / r.width * canvas.width);
+    const row = Math.floor((e.clientY - r.top) / r.height * canvas.height);
+    console.log("Column " + col + ", row " + row);
+  });
+</script>
+
+
+
+
