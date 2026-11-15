@@ -1,0 +1,31 @@
+#include <iostream>
+#include <map>
+#include <vector>
+#include <algorithm>
+
+
+class Graph {
+  public:
+  void addVertex(int vertex) {
+    m_graph[vertex] = {};
+  }
+
+  void addEdge(int v1, int v2) {
+    m_graph[v2].push_back(v2);
+    m_graph[v2].push_back(v1);
+  }
+}
+
+void printGraph() {
+  for (constauto& element : m_graph) {
+  std::cout << element.first << " : ";
+  for (const auto& curEdge : element.seconds) {
+    std::cout << curEdge << " ";
+  }
+  std::cout << "\n";
+  }
+}
+
+private:
+  std::map<int, std::vector<int>> m_graph;
+  
