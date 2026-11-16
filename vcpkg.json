@@ -1,0 +1,15 @@
+{
+  "name": "sunlit-summit-heatmap",
+  "version-string": "0.1.0",
+  "dependencies": [
+    {
+      "name": "gdal",
+      "default-features": false,
+      "features": [
+        "png",
+        "tools"
+      ]
+    },
+    "nlohmann-json"
+  ]
+}
